@@ -1,0 +1,24 @@
+{
+  "name": "faslet/magento2-hyva",
+  "description": "Faslet module compatibility for Hyvä Themes",
+  "type": "magento2-module",
+  "license": [
+      "BSD-2-Clause"
+  ],
+  "require": {
+      "magento/framework": "*",
+      "hyva-themes/magento2-compat-module-fallback": "*",
+      "faslet/magento2": "*"
+  },
+  "require-dev": {
+      "phpstan/phpstan": "*"
+  },
+  "autoload": {
+      "files": [
+        "src/registration.php"
+      ],
+      "psr-4": {
+          "Faslet\\HyvaConnect\\": "src/"
+      }
+  }
+}
