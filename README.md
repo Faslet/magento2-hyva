@@ -1,4 +1,4 @@
-![header-hyva]https://github.com/Faslet/magento2-hyva/blob/main/assets/header.jpg?raw=true)
+![header-hyva](https://github.com/Faslet/magento2-hyva/blob/main/assets/header.jpg?raw=true)
 
 # Faslet Hyvä Compatibility widget
 
