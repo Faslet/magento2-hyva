@@ -1,14 +1,12 @@
-<?php 
+<?php
   /** @var \Magento\Framework\Escaper $escaper */
   /** @var \Magento\Framework\View\Element\Template $block */
   /** @var \Faslet\Connect\ViewModel\ProductWidget $viewModel */
 
-  $viewModel = $block->getViewModel(); 
+  $viewModel = $block->getViewModel();
 ?>
 
 <?php if ($widgetData = $viewModel->getWidgetData()): ?>
-    <?= /* @noEscape */ "<script>console.log(JSON.parse('" . json_encode($widgetData) . "'));</script>"; ?>
-
     <div class="faslet-widget-box">
         <faslet-app
             shop-id="<?= $escaper->escapeHtmlAttr($widgetData['shop']['id'] ?? ''); ?>"
@@ -34,15 +32,30 @@
                 variants: <?= /* @noEscape */ json_encode($widgetData['product']['variants'] ?? []); ?>,
 
                 addToCart(_) {
-                    const optionSize = document.querySelector(`[aria-label="${productData.size}"]`);
-                    const optionColor = document.querySelector(`[aria-label="${productData.color}"]`);
-                    const qty = document.querySelector('input[name="qty"]');
-                    const addToCart = document.querySelector('#product-addtocart-button');
+                    const form = document.getElementById('product_addtocart_form') || document;
+                    const selectOption = (label) => {
+                        if (!label) {
+                            return;
+                        }
+                        const value = CSS.escape(label);
+                        const option = form.querySelector(`[data-option-label="${value}"], [aria-label="${value}"]`);
+                        if (option instanceof HTMLOptionElement) {
+                            option.parentElement.value = option.value;
+                            option.parentElement.dispatchEvent(new Event('change', {bubbles: true}));
+                        } else {
+                            option?.click();
+                        }
+                    };
+                    // Hyvä renders qty and the button outside the form, linked via the form attribute
+                    const qty = form.elements?.namedItem('qty') || document.querySelector('input[name="qty"]');
+                    const addToCart = document.getElementById('product-addtocart-button');
 
-                    optionSize.click();
-                    optionColor.click();
-                    qty.value = 1;
-                    addToCart.click();
+                    selectOption(productData.size);
+                    selectOption(productData.color);
+                    if (qty) {
+                        qty.value = 1;
+                    }
+                    addToCart?.click();
                 },
 
                 onResult(result, _) {
@@ -55,4 +68,7 @@
             }
         })();
     </script>
+    <?php if (isset($hyvaCsp)): ?>
+        <?php $hyvaCsp->registerInlineScript() ?>
+    <?php endif; ?>
 <?php endif; ?>
